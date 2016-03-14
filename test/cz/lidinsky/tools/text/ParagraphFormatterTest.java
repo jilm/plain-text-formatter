@@ -37,15 +37,6 @@ public class ParagraphFormatterTest extends TestCase {
             .append("I am only curious wheather this will work or not.")
             .append("I will just see.")
             .toString());
-    moreParagraphs = new StrIterator( new Buffer()
-            .append(StrCode.PARAGRAPH)
-            .append(StrCode.TEXT, "Jirik mi tady porad na neco tuka a tak nevim")
-            .append(StrCode.TEXT, "jestli to bude dobre fungovat. Snad ano.")
-            .append(StrCode.TEXT, "A mamina ted na n8s blbe kouka!")
-            .append(StrCode.PARAGRAPH)
-            .append(StrCode.TEXT, "Ale nejlepsi ze vseho je stejne krtecek.")
-            .toString());
-
   }
 
   @Override

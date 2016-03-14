@@ -5,18 +5,19 @@
  */
 package cz.lidinsky.tools.text;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
- * Main formatter class.
+ * Format given marked input into the plain text.
  */
 public class Formatter {
 
   public Formatter() { }
 
-  public String format(StrIterator iterator) {
+  /**
+   *
+   * @param iterator
+   * @return
+   */
+  public String format(AbstractIterator iterator) {
     return new PageFormatter(iterator).format();
   }
 
