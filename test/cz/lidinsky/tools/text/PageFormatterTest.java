@@ -39,22 +39,6 @@ public class PageFormatterTest extends TestCase {
   }
 
   /**
-   * Test of formatLine method, of class PageFormatter.
-   */
-  public void testFormatLine() {
-    System.out.println("formatLine");
-    char[] buffer = null;
-    int offset = 0;
-    int length = 0;
-    PageFormatter instance = null;
-    boolean expResult = false;
-    boolean result = instance.formatLine(buffer, offset, length);
-    assertEquals(expResult, result);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
-  }
-
-  /**
    * Test of getNestedFormatter method, of class PageFormatter.
    */
   public void testGetNestedFormatter() {

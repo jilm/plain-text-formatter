@@ -107,7 +107,7 @@ class ListFormatter extends AbstractFormatter {
   }
 
   public static String getOrderNumber(int level, int order) {
-    return getNumericOrderNumber(order);
+    return intToLowercase(order);
   }
 
   public static void getOrderNumber(int level, int order, char[] buffer, int offset, int length) {
@@ -136,5 +136,16 @@ class ListFormatter extends AbstractFormatter {
     } else {
       getBullet(level, buffer, offset, length);
     }
+  }
+
+  public static String intToLowercase(int number) {
+
+    int radix = 'z' - 'a' + 1;
+    StringBuilder sb = new StringBuilder();
+    do {
+      sb.insert(0, (char)(number % radix + 'a'));
+      number /= radix;
+    } while(number > 0);
+    return sb.toString();
   }
 }

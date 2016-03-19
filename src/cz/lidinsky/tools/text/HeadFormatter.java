@@ -5,6 +5,8 @@
  */
 package cz.lidinsky.tools.text;
 
+import java.util.Arrays;
+
 /**
  * Main formatter class.
  */
@@ -13,8 +15,21 @@ class HeadFormatter extends AbstractFormatter {
   private String head;
 
   HeadFormatter(CountingIterator iterator) {
-    this.head = iterator.getText();
+    String text = iterator.getText();
+    StrCode code = iterator.getCode();
+    int level = iterator.getHeadLevel();
+    if (!StrUtils.isBlank(text)) {
+      head = iterator.getFullHeadNumber() + " " + getDecorator(level) + " " + text + " " + getDecorator(level);
+    } else {
+      head = "Chapter" + " " + iterator.getFullHeadNumber();
+    }
     iterator.next();
+  }
+
+  static String getDecorator(int level) {
+    char[] decorator = new char[5 - level];
+    Arrays.fill(decorator, '-');
+    return new String(decorator);
   }
 
   /**

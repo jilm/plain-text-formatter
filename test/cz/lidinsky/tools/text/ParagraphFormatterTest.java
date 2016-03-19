@@ -98,28 +98,6 @@ public class ParagraphFormatterTest extends TestCase {
     assertFalse(result);
   }
 
-  public void testFormatLine3() {
-    System.out.println("formatLine2");
-    char[] buffer = new char[80];
-    Arrays.fill(buffer, '.');
-    int offset = 0;
-    int length = 79;
-    ParagraphFormatter instance = new ParagraphFormatter(moreParagraphs);
-    boolean result = instance.formatLine(buffer, offset, length);
-    System.out.println(new String(buffer));
-    assertTrue(result);
-    Arrays.fill(buffer, '.');
-    result = instance.formatLine(buffer, offset, length);
-    System.out.println(new String(buffer));
-    assertTrue(result);
-    Arrays.fill(buffer, '.');
-    result = instance.formatLine(buffer, offset, length);
-    System.out.println(new String(buffer));
-    assertTrue(result);
-    result = instance.formatLine(buffer, offset, length);
-    assertFalse(result);
-  }
-
   /**
    * Test of next method, of class ParagraphFormatter.
    */

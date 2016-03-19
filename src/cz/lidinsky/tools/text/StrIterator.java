@@ -39,6 +39,11 @@ public class StrIterator extends AbstractIterator {
     this.cursorStack = new ArrayDeque<>();
   }
 
+  @Override
+  String getBuffer() {
+    return buffer;
+  }
+
   //--------------------------------------------------------- Public Interface.
 
   /** Actual index into the buffer. */

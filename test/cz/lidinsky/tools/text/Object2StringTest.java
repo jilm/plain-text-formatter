@@ -53,16 +53,5 @@ public class Object2StringTest extends TestCase {
     System.out.println(result);
   }
 
-  /**
-   * Test of dfs method, of class Object2String.
-   */
-  public void testDfs() {
-    System.out.println("dfs");
-    Object object = null;
-    Object2String instance = new Object2String();
-    instance.dfs(object);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
-  }
 
 }

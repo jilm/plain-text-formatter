@@ -147,9 +147,9 @@ class CountingIterator extends AbstractIterator {
   }
 
   String getFullHeadNumber() {
-    String result = Integer.toString(headCounter[0]);
-    for (int i = 1; i < actualHeadLevel; i++) {
-      result += "." + Integer.toString(headCounter[i]);
+    String result = "";
+    for (int i = 0; i <= actualHeadLevel; i++) {
+      result += Integer.toString(headCounter[i] + 1) + ".";
     }
     return result;
   }
@@ -160,6 +160,11 @@ class CountingIterator extends AbstractIterator {
 
   int getListItemCount() {
     return listCounter.getFirst();
+  }
+
+  @Override
+  String getBuffer() {
+    return iterator.getBuffer();
   }
 
 }

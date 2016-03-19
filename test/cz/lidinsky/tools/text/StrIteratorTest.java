@@ -103,12 +103,4 @@ public class StrIteratorTest extends TestCase {
     assertTrue(instance.isAtTheEnd());
   }
 
-  public void testIsAtTheEnd1() {
-    System.out.println("isAtTheEnd");
-    StrIterator instance = new StrIterator("a00");
-    assertFalse(instance.isAtTheEnd());
-    assertTrue(instance.next());
-    assertTrue(instance.isAtTheEnd());
-  }
-
 }

@@ -48,5 +48,7 @@ public abstract class AbstractIterator {
 
   abstract boolean isEmpty();
 
+  abstract String getBuffer();
+
 }
 

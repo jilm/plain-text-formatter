@@ -129,6 +129,7 @@ public class StrBuffer {
    * @param head
    *            text of the head. Should not be too long. If null, empty string
    *            is used instead.
+   * @return
    */
   protected StrBuffer appendHead(int level, String head) {
     level = level < 0 ? 0 : level;
@@ -180,7 +181,7 @@ public class StrBuffer {
    */
   protected void close(int level) {
     StrCode code = getLastOpenedCode();
-    while (code != null && code.getLevel() > level) {
+    while (code != null && code.getLevel() >= level) {
       closeLast();
       code = getLastOpenedCode();
     }

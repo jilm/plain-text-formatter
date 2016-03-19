@@ -20,7 +20,7 @@ class PageFormatter {
   private int indent;
 
   PageFormatter(AbstractIterator iterator) {
-    this.iterator = new CountingIterator(iterator);
+    this.iterator = new CountingIterator(new StatIterator(new CountingIterator(iterator)));
     lineBuffer = new char[79];
     this.indent = 0;
   }

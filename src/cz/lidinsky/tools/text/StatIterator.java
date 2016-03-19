@@ -6,12 +6,13 @@ import java.util.Map;
 
 class StatIterator extends AbstractIterator {
 
-  private final AbstractIterator iterator;
+  private final CountingIterator iterator;
 
-  StatIterator(AbstractIterator iterator) {
+  StatIterator(CountingIterator iterator) {
     this.iterator = iterator;
     references = new HashMap<>();
     headCount = new int[5];
+    scan();
   }
 
   private void initialize() {
@@ -21,12 +22,13 @@ class StatIterator extends AbstractIterator {
 
   private final int[] headCount;
   private final Map<String, String> references;
+  private String latestHead;
 
-  void scan() {
-    iterator.push();
+  private void scan() {
+    CountingIterator iter = new CountingIterator(new StrIterator(this.iterator.getBuffer()));
     String mark = null;
-    while (!iterator.isAtTheEnd()) {
-      StrCode code = iterator.getCode();
+    while (!iter.isAtTheEnd()) {
+      StrCode code = iter.getCode();
       switch (code) {
         case HEAD0:
         case HEAD1:
@@ -34,24 +36,34 @@ class StatIterator extends AbstractIterator {
         case HEAD3:
         case HEAD4:
           headCount[getHeadLevel(code)]++;
+          latestHead = iter.getFullHeadNumber() + " " + iter.getText();
           if (mark != null) {
-            references.put(mark, iterator.getText());
+            if (latestHead != null) references.put(mark, latestHead);
             mark = null;
           }
           break;
         case MARK:
-          mark = iterator.getText();
+          mark = iter.getText();
+          break;
+        case ITEM:
+          if (mark != null) {
+            String reference = String.format("see item %s in chapter %s",
+                    ListFormatter.getOrderNumber(iter.getListLevel(), iter.getListItemCount()),
+                    latestHead);
+            references.put(mark, reference);
+            mark = null;
+          }
           break;
       }
+      iter.next();
     }
-    iterator.pop();
   }
 
   protected String getReference(String mark) {
     if (references.containsKey(mark)) {
-      return "see " + references.get(mark);
+      return references.get(mark);
     } else {
-      return String.format("<A mark for id: %s was not found!>", mark);
+      return String.format("A mark for id: %s was not found!", mark);
     }
   }
 
@@ -84,7 +96,14 @@ class StatIterator extends AbstractIterator {
 
   @Override
   public WordIterator getWordIterator() {
-    return iterator.getWordIterator();
+    StrCode code = iterator.getCode();
+    switch (code) {
+      case REFERENCE:
+        String text = getReference(iterator.getText());
+        return new WordIterator(text, 0, text.length());
+      default:
+        return iterator.getWordIterator();
+    }
   }
 
   /**
@@ -146,6 +165,11 @@ class StatIterator extends AbstractIterator {
   @Override
   void pop() {
     iterator.pop();
+  }
+
+  @Override
+  String getBuffer() {
+    return iterator.getBuffer();
   }
 
 
