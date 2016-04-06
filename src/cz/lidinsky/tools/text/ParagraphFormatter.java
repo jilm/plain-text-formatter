@@ -26,12 +26,37 @@ class ParagraphFormatter extends AbstractFormatter {
    */
   ParagraphFormatter(AbstractIterator iterator) {
     this.iterator = iterator;
+    this.words = collectWords(iterator);
     this.end = false;
     this.paragraphCounter = -1;
     this.indentFirstLine = 4;
     this.lineCounter = 0;
     this.paragraphEnd = true;
     while (!isEnd() && (words == null || words.isAtTheEnd())) this.next();
+  }
+
+  private WordIterator collectWords(AbstractIterator iterator) {
+    ConcatWordIterator iterators = new ConcatWordIterator();
+    while (!iterator.isAtTheEnd()) {
+      StrCode code = iterator.getCode();
+      switch (code) {
+        case TEXT:
+        case EMPHASIZE:
+        case STRONG:
+        case LITERAL:
+          iterators.add(iterator.getWordIterator());
+          iterator.next();
+          break;
+        case REFERENCE:
+          iterators.add(new WordIterator(
+              "see " + iterator.getText(), 0, 4 + iterator.getText().length()));
+          iterator.next();
+          break;
+        default:
+          return iterators;
+      }
+    }
+    return iterators;
   }
 
   /**
@@ -43,17 +68,12 @@ class ParagraphFormatter extends AbstractFormatter {
   protected boolean formatLine(
       char[] buffer, final int offset, final int length) {
 
-    if (isEnd()) return false;
-
-    if (isParagraphEnd()) {
-      nextParagraph();
+    if (!words.isAtTheEnd()) {
+      StrUtils.fillLine(words, buffer, offset, length);
+      return true;
+    } else {
+      return false;
     }
-
-    int indent = (lineCounter == 0 && paragraphCounter > 0) ? 4 : 0;
-
-    leftAlign(buffer, offset + indent, length - indent);
-    lineCounter++;
-    return true;
   }
 
   /**

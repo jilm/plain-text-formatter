@@ -6,24 +6,53 @@
 package cz.lidinsky.tools.text;
 
 /**
+ * Splits the given string into words and iterates over tham.
  *
  * @author jilm
  */
 public class WordIterator {
 
+  /** The whole string that will be split. */
   private final String buffer;
+
+  /**
+   * First character in the buffer. Always positive number that is less than
+   * the buffer.length
+   */
   private final int offset;
+
+  /** 
+   * Length of the given sentence. Always positive number, where offset
+   * lenght is less or equal than buffer.length
+   */
   private final int length;
+
+  /** Pointer to the first character of the actual word. */
   private int cursor;
+
+  /** Length of the actual word. */
   private int wordLength;
 
+  /**
+   * Finds the first word in the given buffer, so the method getWord returns
+   * the first word.
+   *
+   * @param buffer
+   *            the string to be split into the words
+   *
+   * @param offset
+   *            the index of the first character in the buffer
+   *
+   * @param length
+   *            the lenght of the string
+   */
   public WordIterator(String buffer, int offset, int length) {
     this.buffer = buffer == null ? "" : buffer;
-    this.offset = Math.min(offset, this.buffer.length());
-    this.length = Math.min(length, this.buffer.length() - this.offset);
+    this.offset = StrUtils.validateArrayOffset(buffer.length(), offset);
+    this.length = StrUtils.validateArrayLength(buffer.length(), offset, length);
     this.cursor = 0;
-    skipWhitespace();
-    this.wordLength = calculateWordLength();
+    skipWhitespace(); // find first non whitespace character
+    this.wordLength = calculateWordLength(); // calculate the word length
   }
 
   /**
@@ -39,6 +68,9 @@ public class WordIterator {
     }
   }
 
+  /**
+   * Returns true is there are no more words to iterate over.
+   */
   public boolean isAtTheEnd() {
     return cursor >= length;
   }
@@ -73,13 +105,15 @@ public class WordIterator {
   }
 
   public int getChars(char[] buffer, int offset, int length) {
+    offset = StrUtils.validateArrayOffset(buffer.length, offset);
+    length = StrUtils.validateArrayLength(buffer.length, offset, length);
     int size = Math.min(wordLength, length);
     if (size > 0) {
       this.buffer.getChars(
               this.offset + cursor,
-              this.offset + cursor + wordLength, buffer, offset);
+              this.offset + cursor + size, buffer, offset);
     }
-    return size;
+    return size < 0 ? 0 : size;
   }
 
   /**

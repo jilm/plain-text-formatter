@@ -58,6 +58,7 @@ class ListFormatter extends AbstractFormatter {
             case REFERENCE:
             case PARAGRAPH:
               //getPrefix(0, order, buffer, offset, 4);
+              iterator.next();
               childFormatter = new ParagraphFormatter(iterator);
               break;
             case ITEM:

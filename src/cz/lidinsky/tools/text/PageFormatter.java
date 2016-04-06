@@ -78,6 +78,7 @@ class PageFormatter {
           return new ListFormatter(iterator);
         case PARAGRAPH:
           indent = 2;
+          iterator.next();
           return new ParagraphFormatter(iterator);
         default:
           System.out.println("!!!" + code);
