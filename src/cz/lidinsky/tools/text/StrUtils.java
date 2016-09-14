@@ -178,6 +178,14 @@ public class StrUtils {
     return Math.min(length < 0 ? 0 : length, bufferLength - offset);
   }
 
+  public static String toString(Object object) {
+    if (object == null) {
+      return "<null>";
+    } else {
+      return object.toString();
+    }
+  }
+
   public static void main(String[] args) throws Exception {
     java.io.BufferedReader reader
       = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));

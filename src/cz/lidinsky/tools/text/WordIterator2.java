@@ -10,7 +10,7 @@ package cz.lidinsky.tools.text;
  *
  * @author jilm
  */
-public class WordIterator {
+public class WordIterator2 {
 
   /** The whole string that will be split. */
   private final String buffer;
@@ -19,15 +19,16 @@ public class WordIterator {
    * First character in the buffer. Always positive number that is less than
    * the buffer.length
    */
-  private final int offset;
+  private int offset;
 
   /**
    * Length of the given sentence. Always positive number, where offset
    * lenght is less or equal than buffer.length
    */
-  private final int length;
+  private int length;
 
-  /** Pointer to the first character of the actual word. */
+  /** Pointer to the first character of the actual word. The pointer is
+   relative, it means, you must add an offset to obtain the buffer index. */
   private int cursor;
 
   /** Length of the actual word. */
@@ -46,32 +47,39 @@ public class WordIterator {
    * @param length
    *            the lenght of the string
    */
-  public WordIterator(String buffer, int offset, int length) {
+  public WordIterator2(String buffer, int offset, int length) {
     this.buffer = buffer == null ? "" : buffer;
     this.offset = StrUtils.validateArrayOffset(buffer.length(), offset);
     this.length = StrUtils.validateArrayLength(buffer.length(), offset, length);
+    trim();
     this.cursor = 0;
-    skipWhitespace(); // find first non whitespace character
     this.wordLength = calculateWordLength(); // calculate the word length
+  }
+
+  /**
+   * Change offset and length properties such that they points to non whitespace
+   * charecters.
+   */
+  private void trim() {
+    int size = skipWhitespace(0);
+    offset += size;
+    length -= size;
+    while (length > 0 && Character.isWhitespace(buffer.charAt(offset + length - 1))) {
+      length --;
+    }
   }
 
   /**
    * Finds first non whitespace character.
    */
   private void skipWhitespace() {
-    while (cursor < length) {
-      if (Character.isWhitespace(buffer.charAt(offset + cursor))) {
-        cursor++;
-      } else {
-        return;
-      }
-    }
+    cursor += skipWhitespace(cursor);
   }
 
   private int skipWhitespace(int position) {
     int size = 0;
     while (position + size < length) {
-      if (Character.isWhitespace(buffer.charAt(position + size))) {
+      if (Character.isWhitespace(buffer.charAt(offset + position + size))) {
         size ++;
       } else {
         return size;
@@ -83,7 +91,7 @@ public class WordIterator {
   private int skipWord(int position) {
     int size = 0;
     while (position + size < length) {
-      if (!Character.isWhitespace(buffer.charAt(position + size))) {
+      if (!Character.isWhitespace(buffer.charAt(offset + position + size))) {
         size ++;
       } else {
         return size;
@@ -92,29 +100,44 @@ public class WordIterator {
     return size;
   }
 
+  /**
+   * Returns characters remaining.
+   *
+   * @return
+   */
+  public int size() {
+    return length;
+  }
 
   /**
-   * Returns true is there are no more words to iterate over.
+   * Returns true if there is no character left.
+   *
+   * @return
    */
-  public boolean isAtTheEnd() {
+  public boolean isEmpty() {
     return cursor >= length;
   }
 
   /**
-   * Muve cursor to the next word.
-   *
-   * @return false if the end of the text was reached and no more word is
-   *            available.
+   * Reset pointer
    */
-  public boolean next() {
-    // skip actual word
-    cursor += wordLength;
-    // skip whitespaces
+  public void reset() {
+    this.cursor = 0;
+    this.wordLength = calculateWordLength(); // calculate the word length
+  }
+
+  public int getChars(char[] buffer, int offset, int length) {
+    int size = Math.min(length, this.length - cursor);
+    this.buffer.getChars(this.offset + cursor, this.offset + cursor + size, buffer, offset);
+    cursor += size;
     skipWhitespace();
-    // calculate word length
-    this.wordLength = calculateWordLength();
-    // return
-    return this.wordLength > 0;
+    this.wordLength = calculateWordLength(); // calculate the word length
+    return size;
+  }
+
+  public int getWord(char[] buffer, int offset, int length) {
+    int size = getChars(buffer, offset, wordLength);
+    return size;
   }
 
   private int calculateWordLength() {
@@ -133,18 +156,6 @@ public class WordIterator {
     return count;
   }
 
-  public int getChars(char[] buffer, int offset, int length) {
-    offset = StrUtils.validateArrayOffset(buffer.length, offset);
-    length = StrUtils.validateArrayLength(buffer.length, offset, length);
-    int size = Math.min(wordLength, length);
-    if (size > 0) {
-      this.buffer.getChars(
-              this.offset + cursor,
-              this.offset + cursor + size, buffer, offset);
-    }
-    return size < 0 ? 0 : size;
-  }
-
   /**
    * Returns length of the word that is available. Returns zero, if the
    * end of the string has been reached.
@@ -156,17 +167,17 @@ public class WordIterator {
   }
 
   public int getLength(int length) {
-    int avaylable = 0;
+    int available = 0;
     int delimiter = 0;
     int position = cursor + skipWhitespace(cursor);
     while (true) {
       int size = skipWord(position);
       if (size == 0) {
-        return avaylable;
-      } else if (avaylable + delimiter + size > length) {
-        return avaylable;
+        return available;
+      } else if (available + delimiter + size > length) {
+        return available;
       } else {
-        avaylable += delimiter + size;
+        available += delimiter + size;
         position += size;
         position += skipWhitespace(position);
         delimiter = 1;
