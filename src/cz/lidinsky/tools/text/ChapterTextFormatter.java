@@ -16,49 +16,39 @@
  */
 package cz.lidinsky.tools.text;
 
-import static cz.lidinsky.tools.text.StrUtils.isBlank;
-
 /**
  *
+ * @author jilm
  */
-public class TextFormatter extends AbstractTextFormatter {
+class ChapterTextFormatter extends BlockTextFormatter {
 
-  private final WordIterator2 words;
-  //private final int alignment;
-  //private final int decoration;
-
-  TextFormatter(AbstractTextFormatter parent, String text) {
+  public ChapterTextFormatter(AbstractTextFormatter parent) {
     super(parent);
-    if (isBlank(text)) {
-      throw new IllegalArgumentException();
-    }
-    this.words = new WordIterator2(text, 0, text.length());
-    //this.alignment = alignment;
-    //this.decoration = decoration;
   }
 
+  @Override
   protected int formatLine(char[] buffer, int offset, int length) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
+  @Override
   protected boolean isEmpty() {
-    return words.isEmpty();
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
+  @Override
   protected int getLength(int length) {
-    return words.getLength(length);
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
+  @Override
   protected int getWords(int length) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
-  int getWord(char[] buffer, int offset) {
-    return words.getWord(buffer, offset, buffer.length - offset);
-  }
-
-  void getChars(char[] buffer, int offset, int length) {
-    words.getChars(buffer, offset, length);
+  @Override
+  protected int getPrefix(char[] buffer, int offset, int length) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
 }

@@ -45,8 +45,12 @@ enum StrCode {
   TEXT (100),
   LIST_END (100),
   MARK (100),
-  REFERENCE (100)
-    ;
+  REFERENCE (100),
+  ARTICLE(100),
+  CHAPTER (100),
+  TITLE(100),
+  KEY (100),
+  VALUE (100);
 
   int level;
 

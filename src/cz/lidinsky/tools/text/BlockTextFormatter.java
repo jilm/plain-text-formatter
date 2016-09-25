@@ -16,9 +16,6 @@
  */
 package cz.lidinsky.tools.text;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Common predecessor for all of the text formatters whose children are blocks
  * of text.
@@ -26,13 +23,13 @@ import java.util.List;
 abstract class BlockTextFormatter extends AbstractTextFormatter {
 
   /** Child formatters. */
-  protected final List<AbstractTextFormatter> children;
+  //protected final List<AbstractTextFormatter> children;
 
   /** */
-  protected final int depth;
+  //protected final int depth;
 
   /** */
-  protected final int order;
+  //protected final int order;
 
   /** Line number relative to the first number of this list. */
   private int lineCounter;
@@ -48,10 +45,11 @@ abstract class BlockTextFormatter extends AbstractTextFormatter {
    * @param depth
    * @param order
    */
-  BlockTextFormatter(int depth, int order) {
-    this.children = new ArrayList<>();
-    this.depth = depth;
-    this.order = order;
+  BlockTextFormatter(AbstractTextFormatter parent) {
+    super(parent);
+    //this.children = new ArrayList<>();
+    //this.depth = depth;
+    //this.order = order;
     this.lineCounter = 0;
     this.childCounter = 0;
     this.lineOfChildCounter = 0;
@@ -89,36 +87,7 @@ abstract class BlockTextFormatter extends AbstractTextFormatter {
    */
   protected abstract int getPrefix(char[] buffer, int offset, int length);
 
-  /**
-   * Returns first non empty child formatter or null.
-   *
-   * @return
-   */
-  protected AbstractTextFormatter getChild() {
-    if (isEmpty()) return null;
-    return children.get(0);
-  }
 
-  /**
-   * Returns true if there is not any text content inside this block.
-   *
-   * @return
-   */
-  @Override
-  protected boolean isEmpty() {
-    if (children.isEmpty()) {
-      return true;
-    } else {
-      if (children.get(0).isEmpty()) {
-        childCounter ++;
-        lineOfChildCounter = 0;
-        while (!children.isEmpty() && children.get(0).isEmpty()) {
-          children.remove(0);
-        }
-      }
-    }
-    return children.isEmpty();
-  }
 
   @Override
   protected int getLength(int length) {
@@ -130,12 +99,12 @@ abstract class BlockTextFormatter extends AbstractTextFormatter {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
-  BlockTextFormatter add(final AbstractTextFormatter text) {
-    if (text != null && !text.isEmpty()) {
-      children.add(text);
-    }
-    return this;
-  }
+  //BlockTextFormatter add(final AbstractTextFormatter text) {
+  //  if (text != null && !text.isEmpty()) {
+  //    children.add(text);
+  //  }
+  //  return this;
+  //}
 
   int getLineNumber() {
     return lineCounter;

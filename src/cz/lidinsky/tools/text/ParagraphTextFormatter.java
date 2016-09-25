@@ -33,7 +33,8 @@ public class ParagraphTextFormatter extends AbstractTextFormatter {
   private boolean indent;
   private final int alignment;
 
-  ParagraphTextFormatter(final boolean indentFirst, final int alignment) {
+  ParagraphTextFormatter(AbstractTextFormatter parent, final boolean indentFirst, final int alignment) {
+    super(parent);
     this.children = new ArrayList<>();
     this.indent = indentFirst && alignment == ALLIGN_LEFT;
     this.alignment = alignment;
@@ -112,13 +113,11 @@ public class ParagraphTextFormatter extends AbstractTextFormatter {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
-  private TextFormatter getChild() {
-    if (isEmpty()) {
-      return null;
-    } else {
-      return children.get(0);
-    }
+  @Override
+  protected TextFormatter getChild() {
+    return (TextFormatter)super.getChild();
   }
+
 
   /**
    *

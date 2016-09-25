@@ -26,8 +26,8 @@ public class ListTextFormatter extends BlockTextFormatter {
 
   private final boolean ordered;
 
-  ListTextFormatter(int level, boolean ordered) {
-    super(level, 0);
+  ListTextFormatter(AbstractTextFormatter parent, boolean ordered) {
+    super(parent);
     this.ordered = ordered;
   }
 
@@ -45,12 +45,12 @@ public class ListTextFormatter extends BlockTextFormatter {
   protected static final char[] BULLETS = {'o', '*', '-', '#', 'O', 'x', '>', '+', '~'};
 
   protected char getBullet() {
-    return BULLETS[depth % BULLETS.length];
+    return '*'; //BULLETS[depth % BULLETS.length];
   }
 
   protected int getNumber(char[] buffer, int offset, int length) {
     // calculate number of digits
-    int items = children.size() + getChildNumber();
+    int items = getChildren().size() + getChildNumber();
     int digits = Math.round((float)Math.log10(items) - 0.5f) + 1;
     // get the item number
     String number = Integer.toString(getChildNumber() + 1);

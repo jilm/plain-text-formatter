@@ -35,7 +35,8 @@ class TableTextFormatter extends AbstractTextFormatter {
    * @param depth
    * @param order
    */
-  TableTextFormatter(int depth, int order) {
+  TableTextFormatter(AbstractTextFormatter parent) {
+    super(parent);
     stage = 0;
   }
 

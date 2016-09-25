@@ -35,7 +35,8 @@ class ItemTextFormatter extends AbstractTextFormatter {
 
   private int lineOfChildCounter;
 
-  ItemTextFormatter() {
+  ItemTextFormatter(AbstractTextFormatter parent) {
+    super(parent);
     this.children = new ArrayList<>();
     this.lineCounter = 0;
     this.childCounter = 0;

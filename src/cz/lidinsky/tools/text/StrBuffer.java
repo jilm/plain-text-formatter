@@ -540,4 +540,9 @@ public class StrBuffer {
     return text;
   }
 
+  void append(StrBuffer sb) {
+    this.sb.append(sb);
+    cursor += sb.sb.length();
+  }
+
 }

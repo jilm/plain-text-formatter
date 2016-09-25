@@ -16,10 +16,78 @@
  */
 package cz.lidinsky.tools.text;
 
+import cz.lidinsky.tree.Node;
+import java.util.List;
+
 /**
  * Common prodecessor for all of the text formatters.
  */
 public abstract class AbstractTextFormatter {
+
+  private Node<AbstractTextFormatter> node;
+
+  /** Line number relative to the first number of this list. */
+  private int lineCounter;
+
+  /** Order number of the item formatted. */
+  private int childCounter;
+
+  /** Line number for the current child. */
+  private int lineOfChildCounter;
+
+  AbstractTextFormatter(AbstractTextFormatter parent) {
+    if (parent != null) {
+      node = new Node<>(parent.node);
+    } else {
+      node = new Node<>();
+    }
+    node.setDecorated(this);
+    this.lineCounter = 0;
+    this.childCounter = 0;
+    this.lineOfChildCounter = 0;
+  }
+
+  AbstractTextFormatter getParent() {
+    if (node.isRoot()) {
+      return null;
+    } else {
+      return node.getParent().getDecorated();
+    }
+  }
+
+  /**
+   * Returns true if there is not any text content inside this block.
+   *
+   * @return
+   */
+  protected boolean isEmpty() {
+    if (node.isLeaf()) {
+      return true;
+    } else {
+      if (node.getDecoratedChildren().get(0).isEmpty()) {
+        childCounter ++;
+        lineOfChildCounter = 0;
+        while (!node.isLeaf() && node.getDecoratedChildren().get(0).isEmpty()) {
+          node.remove(0);
+        }
+      }
+    }
+    return node.isLeaf();
+  }
+
+  /**
+   * Returns first non empty child formatter or null.
+   *
+   * @return
+   */
+  protected AbstractTextFormatter getChild() {
+    if (isEmpty()) return null;
+    return node.getDecoratedChildren().get(0);
+  }
+
+  List<AbstractTextFormatter> getChildren() {
+    return node.getDecoratedChildren();
+  }
 
   /**
    * Format one line of text into the given buffer. This method is called
@@ -33,11 +101,6 @@ public abstract class AbstractTextFormatter {
    */
   abstract protected int formatLine(char[] buffer, int offset, int length);
 
-  /**
-   *
-   * @return
-   */
-  abstract protected boolean isEmpty();
 
   /**
    * Returns number of characters which will be written by the next formatLine
