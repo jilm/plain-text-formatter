@@ -51,8 +51,13 @@ public class ParagraphBuilder extends AbstractBuilder {
   }
 
   @Override
-  protected StrCode getCode() {
-    return StrCode.PARAGRAPH;
+  protected void serializePrior(final StrBuffer sb) {
+    sb.append(StrCode.PARAGRAPH);
+  }
+
+  @Override
+  protected void serializePost(final StrBuffer sb) {
+    sb.append(StrCode.END);
   }
 
 }

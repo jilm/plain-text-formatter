@@ -17,8 +17,9 @@
 package cz.lidinsky.tools.text;
 
 /**
- * Small, simple text with a title, which may be devided into more than one
- * chapter.
+ * It is inteded to be a list item content. This object may contain only
+ * paragraphs, nested lists or tables. It may not contain nested chapter
+ * objects.
  */
 public class ItemBuilder extends AbstractBuilder {
 
@@ -27,24 +28,11 @@ public class ItemBuilder extends AbstractBuilder {
   }
 
   public ParagraphBuilder appendParagraph() {
-    ParagraphBuilder builder = new ParagraphBuilder(this);
-    addChild(builder);
-    return builder;
+    return new ParagraphBuilder(this);
   }
 
   public ListBuilder appendList(boolean ordered) {
-    ListBuilder builder = new ListBuilder(this, ordered);
-    addChild(builder);
-    return builder;
+    return new ListBuilder(this, ordered);
   }
 
-  @Override
-  void serialize(StrBuffer sb) {
-    getChildren().stream().forEach(child -> child.serialize(sb));
-  }
-
-  @Override
-  protected StrCode getCode() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
 }

@@ -18,7 +18,7 @@ package cz.lidinsky.tools.text;
 
 /**
  * Small, simple text with a title, which may be devided into more than one
- * chapter.
+ * chapter. This object is the root builder object.
  */
 public class ArticleBuilder extends AbstractBuilder {
 
@@ -26,41 +26,80 @@ public class ArticleBuilder extends AbstractBuilder {
       doesn't have a title. */
   private final String title;
 
+  /**
+   * Initialize the object.
+   *
+   * @param title
+   *            the title of the article, may be null or blank. In such a case
+   *            the article doesn't hava a title.
+   */
   public ArticleBuilder(String title) {
     super(null);
     this.title = title;
   }
 
+  /**
+   * Appends and returns a paragraph.
+   *
+   * @return appends and returns an empty paragraph object
+   */
   public ParagraphBuilder appendParagraph() {
-    ParagraphBuilder paragraph = new ParagraphBuilder(this);
-    addChild(paragraph);
-    return paragraph;
+    return new ParagraphBuilder(this);
   }
 
+  /**
+   * Appends and returns a list object.
+   *
+   * @param ordered
+   *            true for ordered (numbered) list, false otherwise.
+   *
+   * @return appends and returnes a list object
+   */
   public ListBuilder appendList(boolean ordered) {
-    ListBuilder builder = new ListBuilder(this, ordered);
-    addChild(builder);
-    return builder;
+    return new ListBuilder(this, ordered);
   }
 
+  /**
+   * Appends and returns a nested chapter object.
+   *
+   * @param title
+   *            title of the chapter, may be null or blank
+   *
+   * @return new empty nested chapter object
+   */
   public ChapterBuilder appendChapter(String title) {
-    ChapterBuilder builder = new ChapterBuilder(this, title);
-    addChild(builder);
-    return builder;
+    return new ChapterBuilder(this, title);
   }
 
+  /**
+   * Appends and returns new empty table builder.
+   *
+   * @return new, empty table builder
+   */
   public TableBuilder appendTable() {
     return new TableBuilder(this);
   }
 
-  @Override
-  protected StrCode getCode() {
-    return StrCode.ARTICLE;
-  }
-
+  /**
+   * Returns serialized form of the article representation.
+   *
+   * @return serialized form of the whole article object.
+   */
   public String serialize() {
     StrBuffer sb = new StrBuffer();
     serialize(sb);
     return sb.toString();
   }
+
+  @Override
+  protected void serializePrior(final StrBuffer sb) {
+    sb.append(StrCode.ARTICLE);
+    // TODO: append title
+  }
+
+  @Override
+  protected void serializePost(final StrBuffer sb) {
+    sb.append(StrCode.END);
+  }
+
 }

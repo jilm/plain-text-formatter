@@ -17,8 +17,7 @@
 package cz.lidinsky.tools.text;
 
 /**
- * Small, simple text with a title, which may be devided into more than one
- * chapter.
+ * A table builder object.
  */
 public class TableBuilder extends AbstractBuilder {
 
@@ -41,6 +40,7 @@ public class TableBuilder extends AbstractBuilder {
   }
 
   public TableBuilder newRow() {
+    this.sb.append(StrCode.ITEM);
     return this;
   }
 
@@ -51,8 +51,4 @@ public class TableBuilder extends AbstractBuilder {
     sb.append(StrCode.END);
   }
 
-  @Override
-  protected StrCode getCode() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
 }

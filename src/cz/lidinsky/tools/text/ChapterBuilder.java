@@ -17,8 +17,8 @@
 package cz.lidinsky.tools.text;
 
 /**
- * Small, simple text with a title, which may be devided into more than one
- * chapter.
+ * Object to build a chapter. Chapter may contain anoter nested chapter objects.
+ * This object is not intended to be a root object.
  */
 public class ChapterBuilder extends AbstractBuilder {
 
@@ -26,39 +26,41 @@ public class ChapterBuilder extends AbstractBuilder {
       doesn't have a title. */
   private final String title;
 
+  /**
+   * Initialize chapter object and connects it to the given parent object.
+   *
+   * @param parent
+   *            parent builder object. It should not be a null value.
+   *
+   * @param title
+   *            a title of the chapter, may be null er blank
+   */
   ChapterBuilder(AbstractBuilder parent, String title) {
     super(parent);
     this.title = title;
   }
 
   public ParagraphBuilder appendParagraph() {
-    ParagraphBuilder paragraph = new ParagraphBuilder(this);
-    addChild(paragraph);
-    return paragraph;
+    return new ParagraphBuilder(this);
   }
 
   public ListBuilder appendList(boolean ordered) {
-    ListBuilder builder = new ListBuilder(this, ordered);
-    addChild(builder);
-    return builder;
+    return new ListBuilder(this, ordered);
   }
 
   public ChapterBuilder appendChapter() {
-    ChapterBuilder builder = new ChapterBuilder(this, title);
-    addChild(builder);
-    return builder;
+    return new ChapterBuilder(this, title);
   }
 
   @Override
-  void serialize(StrBuffer sb) {
+  protected void serializePrior(final StrBuffer sb) {
     sb.append(StrCode.CHAPTER);
     sb.append(StrCode.TITLE, title);
-    getChildren().stream().forEach(child -> child.serialize(sb));
+  }
+
+  @Override
+  protected void serializePost(final StrBuffer sb) {
     sb.append(StrCode.END);
   }
 
-  @Override
-  protected StrCode getCode() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
 }

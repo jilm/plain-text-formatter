@@ -17,8 +17,7 @@
 package cz.lidinsky.tools.text;
 
 /**
- * Small, simple text with a title, which may be devided into more than one
- * chapter.
+ * An ordered or unordered list builder object. This may not be a root object.
  */
 public class ListBuilder extends AbstractBuilder {
 
@@ -26,8 +25,15 @@ public class ListBuilder extends AbstractBuilder {
       doesn't have a title. */
   private final String title;
 
+  /** true if this list is ordered (numbered) or not. */
   private final boolean ordered;
 
+  /**
+   * Initialize new list builder object.
+   *
+   * @param parent
+   * @param ordered
+   */
   ListBuilder(AbstractBuilder parent, boolean ordered) {
     super(parent);
     this.ordered = ordered;
@@ -35,13 +41,17 @@ public class ListBuilder extends AbstractBuilder {
   }
 
   public ItemBuilder appendItem() {
-    ItemBuilder builder = new ItemBuilder(this);
-    addChild(builder);
-    return builder;
+    return new ItemBuilder(this);
   }
 
   @Override
-  protected StrCode getCode() {
-    return ordered ? StrCode.LIST_ORDERED : StrCode.LIST_UNORDERED;
+  protected final void serializePrior(final StrBuffer sb) {
+    sb.append(ordered ? StrCode.LIST_ORDERED : StrCode.LIST_UNORDERED);
   }
+
+  @Override
+  protected final void serializePost(final StrBuffer sb) {
+    sb.append(StrCode.END);
+  }
+
 }

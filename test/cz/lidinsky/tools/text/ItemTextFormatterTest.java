@@ -46,7 +46,7 @@ public class ItemTextFormatterTest {
 
   @Before
   public void setUp() {
-    formatter1 = new ItemTextFormatter();
+    formatter1 = new ItemTextFormatter(null);
     ParagraphTextFormatter par = new ParagraphTextFormatter(true, 0);
     par.add(new TextFormatter("There are 84 kilometres of railway in Sierra Leone, all of which is private and of a narrow gauge, 1,067 mm (3 ft 6 in). Sierra Leone no longer has any common carrier railroads, as the 762 mm (2 ft 6 in) gauge Sierra Leone Government Railway from Freetown through Bo to Kenema and Daru with a branch to Makeni closed in 1974. The country does not share rail links with adjacent countries, Guinea and Liberia.", 0, 0));
     formatter1.add(par);
