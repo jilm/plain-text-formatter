@@ -16,119 +16,52 @@
  */
 package cz.lidinsky.tools.text;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- *
+ * Format one paragraph of text.
  */
 public class ParagraphTextFormatter extends AbstractTextFormatter {
 
-  final int ALLIGN_LEFT = 0;
-  final int ALLIGN_RIGHT = 1;
-  final int ALLIGN_CENTER = 2;
+  public final int ALLIGN_LEFT = 0;
+  public final int ALLIGN_RIGHT = 1;
+  public final int ALLIGN_CENTER = 2;
 
-  /** It may not contain empty children! */
-  private final List<TextFormatter> children;
-  private boolean indent;
+  /** True if the line should be inteded. */
+  private boolean intend;
+
+  /** The method of text alignment. */
   private final int alignment;
 
   ParagraphTextFormatter(AbstractTextFormatter parent, final boolean indentFirst, final int alignment) {
     super(parent);
-    this.children = new ArrayList<>();
-    this.indent = indentFirst && alignment == ALLIGN_LEFT;
+    this.intend = indentFirst && alignment == ALLIGN_LEFT;
     this.alignment = alignment;
   }
 
+  /**
+   * Format one line of text.
+   *
+   * @param line
+   *
+   * @return
+   */
   @Override
-  protected int formatLine(char[] buffer, int offset, int length) {
-    if (isEmpty()) return 0;
-    int leading = indent  ? 4 : 0;
-    indent = false;
-    // check parameters
-    // find out, how many characters are there awaylable
-    int avaylable = getLength(length - leading);
-    // if there is a word that is longer than free space
-    boolean hyphen = avaylable == 0; // if it is necessary to break the long word
-    if (hyphen) {
-      getChild().getChars(buffer, offset + leading, length - leading);
-      return length;
-    } else {
-      // compute leading spaces
-      switch (alignment) {
-        case ALLIGN_LEFT:
-          break;
-        case ALLIGN_RIGHT:
-          leading = length - avaylable;
-          break;
-        case ALLIGN_CENTER:
-          leading = (length - avaylable) / 2;
-          break;
-        default:
-          assert false;
-      }
-      // fill-in words
-      int filled = 0;
-      int delimiter = 0;
-      while (filled < avaylable) {
-        filled += delimiter;
-        filled += getChild().getWord(buffer, offset + leading + filled);
-        delimiter = 1;
-      }
-      return filled;
+  protected boolean formatLine(final Line line) {
+    if (isEmpty()) {
+      return false;
     }
-  }
-
-  @Override
-  protected boolean isEmpty() {
-    while (!children.isEmpty()) {
-      if (children.get(0).isEmpty()) {
-        children.remove(0);
-      } else {
-        return false;
-      }
+    line.skip(intend ? 4 : 0);
+    intend = false;
+    // allignment
+    if (alignment == ALLIGN_RIGHT || alignment == ALLIGN_CENTER) {
+      line.appendGlue();
+    }
+    // fill-in words
+    while (!isEmpty() && !getChild().formatLine(line)) { }
+    // allignment
+    if (alignment == ALLIGN_LEFT || alignment == ALLIGN_CENTER) {
+      line.appendGlue();
     }
     return true;
-  }
-
-  @Override
-  protected int getLength(int length) {
-    if (children == null || children.isEmpty()) return 0;
-    int awaylable = 0;
-    int delimiter = 0;
-    for (TextFormatter textFormatter : children) {
-      int chars = textFormatter.getLength(length - awaylable);
-      if (chars == 0) {
-        return awaylable;
-      } else {
-        awaylable += delimiter + chars;
-      }
-      delimiter = 1;
-    }
-    return awaylable;
-  }
-
-  @Override
-  protected int getWords(int length) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
-  protected TextFormatter getChild() {
-    return (TextFormatter)super.getChild();
-  }
-
-
-  /**
-   *
-   * @param text
-   *            text formatter to add. Null or empty arguments are silently
-   *            ignored.
-   */
-  void add(final TextFormatter text) {
-    if (text != null && !text.isEmpty()) {
-      children.add(text);
-    }
   }
 
 }

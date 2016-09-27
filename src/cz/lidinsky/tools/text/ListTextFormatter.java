@@ -31,17 +31,6 @@ public class ListTextFormatter extends BlockTextFormatter {
     this.ordered = ordered;
   }
 
-  @Override
-  protected int getPrefix(char[] buffer, int offset, int length) {
-    if (ordered) {
-      return getNumber(buffer, offset, length);
-    } else {
-      buffer[offset] = getChildLineNumber() == 0 ? getBullet() : ' ';
-      buffer[offset + 1] = ' ';
-      return 2;
-    }
-  }
-
   protected static final char[] BULLETS = {'o', '*', '-', '#', 'O', 'x', '>', '+', '~'};
 
   protected char getBullet() {
@@ -56,6 +45,20 @@ public class ListTextFormatter extends BlockTextFormatter {
     String number = Integer.toString(getChildNumber() + 1);
     number.getChars(0, number.length(), buffer, offset + digits - number.length());
     return digits;
+  }
+
+  @Override
+  protected void getPrefix(Line line) {
+    if (ordered) {
+      // TODO:
+    } else {
+      if (getChildLineNumber() == 0) {
+        line.append('*'); // TODO:
+        line.skip(1);
+      } else {
+        line.skip(2);
+      }
+    }
   }
 
 

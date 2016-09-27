@@ -18,20 +18,17 @@ package cz.lidinsky.tools.text;
 
 /**
  *
- *
+ * @author jilm
  */
-class ArticleTextFormatter extends BlockTextFormatter{
+public class HeadTextFormatter extends AbstractTextFormatter {
 
-  public ArticleTextFormatter() {
-    super(null);
+  public HeadTextFormatter(AbstractTextFormatter parent, String title) {
+    super(parent);
   }
 
   @Override
-  protected void getPrefix(Line line) { }
-
-  @Override
-  int getLevel() {
-    return 0;
+  boolean formatLine(Line line) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
 }

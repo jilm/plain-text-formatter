@@ -5,7 +5,7 @@
  */
 package cz.lidinsky.tools.text;
 
-import java.util.Arrays;
+import java.util.Stack;
 
 /**
  * Format given marked input into the plain text.
@@ -25,11 +25,11 @@ public class Formatter {
 
   public String format(String buffer) {
     AbstractTextFormatter formatter = deserialize(buffer);
-    char[] line = new char[80];
+    Line line = new Line(80);
     while (!formatter.isEmpty()) {
-      Arrays.fill(line, ' ');
-      formatter.formatLine(line, 0, 79);
-      System.out.println(new String(line));
+      line.reset();
+      formatter.formatLine(line);
+      System.out.println(line.toString());
     }
     return null;
   }
@@ -39,6 +39,7 @@ public class Formatter {
     AbstractTextFormatter pointer = null;
     String key = null;
     String value = null;
+    Stack<Integer> chapterCounter = new Stack<>();
     boolean tempLevel = false;
     while (true) {
       if (iterator.isAtTheEnd()) return pointer;
@@ -46,6 +47,9 @@ public class Formatter {
       System.out.println(code);
       switch (code) {
         case END:
+          if (pointer instanceof ChapterTextFormatter) {
+            chapterCounter.pop();
+          }
           pointer = pointer.getParent();
           break;
         case ARTICLE:
@@ -67,7 +71,10 @@ public class Formatter {
           pointer = new TextFormatter(pointer, iterator.getText());
           break;
         case CHAPTER:
-          pointer = new ChapterTextFormatter(pointer);
+          int chapterNumber = chapterCounter.pop();
+          pointer = new ChapterTextFormatter(pointer, chapterNumber);
+          chapterCounter.push(chapterNumber + 1);
+          chapterCounter.push(1);
           break;
         case KEY:
           key = iterator.getText();

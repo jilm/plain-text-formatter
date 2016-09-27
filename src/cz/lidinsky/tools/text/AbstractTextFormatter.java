@@ -20,13 +20,15 @@ import cz.lidinsky.tree.Node;
 import java.util.List;
 
 /**
- * Common prodecessor for all of the text formatters.
+ * Common prodecessor for all of the text formatters. Fotmatters are organized
+ * into the tree structure.
  */
 public abstract class AbstractTextFormatter {
 
+  /** The node of the tree. */
   private Node<AbstractTextFormatter> node;
 
-  /** Line number relative to the first number of this list. */
+  /** Line number relative to the first number of this object. */
   private int lineCounter;
 
   /** Order number of the item formatted. */
@@ -47,6 +49,15 @@ public abstract class AbstractTextFormatter {
     this.lineOfChildCounter = 0;
   }
 
+  int getLevel() {
+    return getParent().getLevel() + 1;
+  }
+
+  /**
+   * Returns parent formatter object or null if this object is the root object.
+   *
+   * @return
+   */
   AbstractTextFormatter getParent() {
     if (node.isRoot()) {
       return null;
@@ -89,33 +100,6 @@ public abstract class AbstractTextFormatter {
     return node.getDecoratedChildren();
   }
 
-  /**
-   * Format one line of text into the given buffer. This method is called
-   * repeatedly, until the whole text is out.
-   *
-   * @param buffer
-   * @param offset
-   * @param length
-   *
-   * @return number of characters written into the buffer
-   */
-  abstract protected int formatLine(char[] buffer, int offset, int length);
-
-
-  /**
-   * Returns number of characters which will be written by the next formatLine
-   * calls.
-   *
-   * @param length
-   * @return
-   */
-  abstract protected int getLength(int length);
-
-  /**
-   *
-   * @param length
-   * @return
-   */
-  abstract protected int getWords(int length);
+  abstract boolean formatLine(Line line);
 
 }

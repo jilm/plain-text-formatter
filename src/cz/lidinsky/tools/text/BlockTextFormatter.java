@@ -65,15 +65,17 @@ abstract class BlockTextFormatter extends AbstractTextFormatter {
    * @return number of characters
    */
   @Override
-  protected int formatLine(
-      char[] buffer, final int offset, final int length) {
+  boolean formatLine(Line line) {
 
-    if (isEmpty()) return 0;
-    int prefSize = getPrefix(buffer, offset, length);
-    int size = getChild().formatLine(buffer, offset + prefSize, length - prefSize);
-    lineCounter ++;
-    lineOfChildCounter ++;
-    return size;
+    if (isEmpty()) return false;
+    getPrefix(line);
+    if (getChild().formatLine(line)) {
+      lineCounter ++;
+      lineOfChildCounter ++;
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -85,19 +87,10 @@ abstract class BlockTextFormatter extends AbstractTextFormatter {
    * @param length
    * @return
    */
-  protected abstract int getPrefix(char[] buffer, int offset, int length);
+  protected abstract void getPrefix(Line line);
 
 
 
-  @Override
-  protected int getLength(int length) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
-  protected int getWords(int length) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
 
   //BlockTextFormatter add(final AbstractTextFormatter text) {
   //  if (text != null && !text.isEmpty()) {

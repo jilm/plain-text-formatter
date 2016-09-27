@@ -17,7 +17,6 @@
 package cz.lidinsky.tools.text;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -52,38 +51,37 @@ class TableTextFormatter extends AbstractTextFormatter {
    * @return number of characters
    */
   @Override
-  protected int formatLine(
-      char[] buffer, final int offset, final int length) {
+  boolean formatLine(Line line) {
 
-    if (isEmpty()) return 0;
-    analyze(length);
+    if (isEmpty()) return false;
+    analyze(line.getLength());
     switch (stage) {
       case 0: // line above the head
       case 2:
       case 4:
-        Arrays.fill(buffer, offset, length, '-');
+        line.fill(line.getLength(), '-');
         stage++;
-        return length;
+        return true;
       case 1: // head
-        formatRow(buffer, offset, length, columnNames, widths);
+        formatRow(line, columnNames, widths);
         stage++;
-        return length;
+        return true;
       case 3: // body of the table
-        formatRow(buffer, offset, length, getRowValues(), widths);
+        formatRow(line, getRowValues(), widths);
         rows.remove(0);
         if (rows.isEmpty()) {
           stage++;
         }
-        return length;
+        return true;
       default:
-        return 0;
+        return false;
     }
   }
 
   /**
    * Format one row of the table.
    */
-  protected int formatRow(char[] buffer, int offset, int length,
+  protected int formatRow(Line line,
       Collection<String> values, int[] widths) {
 
     int size = 0;
@@ -91,7 +89,7 @@ class TableTextFormatter extends AbstractTextFormatter {
     int i = 0;
     for (String value : values) {
       size += delimit;
-      value.getChars(0, value.length(), buffer, offset + size);
+      line.appendWord(value, widths[i]);
       size += widths[i];
       delimit = 2;
       i++;
@@ -115,16 +113,6 @@ class TableTextFormatter extends AbstractTextFormatter {
   @Override
   protected boolean isEmpty() {
     return rows.isEmpty() && stage != 4;
-  }
-
-  @Override
-  protected int getLength(int length) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
-  protected int getWords(int length) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   List<Map<String, String>> rows = new ArrayList<>();

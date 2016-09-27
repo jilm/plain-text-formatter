@@ -22,13 +22,11 @@ package cz.lidinsky.tools.text;
  */
 class ChapterTextFormatter extends BlockTextFormatter {
 
-  public ChapterTextFormatter(AbstractTextFormatter parent) {
-    super(parent);
-  }
+  private final int chapterNumber;
 
-  @Override
-  protected int formatLine(char[] buffer, int offset, int length) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  public ChapterTextFormatter(AbstractTextFormatter parent, int chapterNumber) {
+    super(parent);
+    this.chapterNumber = chapterNumber;
   }
 
   @Override
@@ -37,17 +35,7 @@ class ChapterTextFormatter extends BlockTextFormatter {
   }
 
   @Override
-  protected int getLength(int length) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
-  protected int getWords(int length) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
-  protected int getPrefix(char[] buffer, int offset, int length) {
+  protected void getPrefix(Line line) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 

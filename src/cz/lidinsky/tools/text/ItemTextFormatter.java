@@ -16,84 +16,18 @@
  */
 package cz.lidinsky.tools.text;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author jilm
  */
-class ItemTextFormatter extends AbstractTextFormatter {
+class ItemTextFormatter extends BlockTextFormatter {
 
-  private final List<AbstractTextFormatter> children;
-
-  /** Line number relative to the first number of this list. */
-  private int lineCounter;
-
-  /** Order number of the item formatted. */
-  private int childCounter;
-
-  private int lineOfChildCounter;
 
   ItemTextFormatter(AbstractTextFormatter parent) {
     super(parent);
-    this.children = new ArrayList<>();
-    this.lineCounter = 0;
-    this.childCounter = 0;
-    this.lineOfChildCounter = 0;
   }
 
   @Override
-  protected int formatLine(
-      char[] buffer, final int offset, final int length) {
-
-    if (isEmpty()) return 0;
-    int prefSize = getPrefix(buffer, offset, length);
-    int size = getChild().formatLine(buffer, offset + prefSize, length - prefSize);
-    lineCounter ++;
-    lineOfChildCounter ++;
-    return size;
-  }
-
-  protected int getPrefix(char[] buffer, int offset, int length) {
-    return 0;
-  }
-
-  protected AbstractTextFormatter getChild() {
-    if (isEmpty()) return null;
-    return children.get(0);
-  }
-
-  @Override
-  protected boolean isEmpty() {
-    if (children.isEmpty()) {
-      return true;
-    } else {
-      if (children.get(0).isEmpty()) {
-        childCounter ++;
-        lineOfChildCounter ++;
-        while (!children.isEmpty() && children.get(0).isEmpty()) {
-          children.remove(0);
-        }
-      }
-    }
-    return children.isEmpty();
-  }
-
-  @Override
-  protected int getLength(int length) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
-  protected int getWords(int length) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  void add(final AbstractTextFormatter text) {
-    if (text != null && !text.isEmpty()) {
-      children.add(text);
-    }
-  }
+  protected void getPrefix(Line line) { }
 
 }
