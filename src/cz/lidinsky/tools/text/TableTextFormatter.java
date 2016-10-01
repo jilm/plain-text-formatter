@@ -29,6 +29,21 @@ import java.util.stream.Collectors;
  */
 class TableTextFormatter extends AbstractTextFormatter {
 
+  private int stage;
+
+  List<Map<String, String>> rows = new ArrayList<>();
+
+  /**
+   * Number of columns.
+   */
+  private int columns;
+
+  private List<String> columnNames;
+
+  private int[] widths;
+
+  private boolean analyzed = false;
+
   /**
    *
    * @param depth
@@ -38,8 +53,6 @@ class TableTextFormatter extends AbstractTextFormatter {
     super(parent);
     stage = 0;
   }
-
-  private int stage;
 
   /**
    * This implementation iterates over the children and calls format line.
@@ -53,7 +66,9 @@ class TableTextFormatter extends AbstractTextFormatter {
   @Override
   boolean formatLine(Line line) {
 
-    if (isEmpty()) return false;
+    if (isEmpty()) {
+      return false;
+    }
     analyze(line.getLength());
     switch (stage) {
       case 0: // line above the head
@@ -82,7 +97,7 @@ class TableTextFormatter extends AbstractTextFormatter {
    * Format one row of the table.
    */
   protected int formatRow(Line line,
-      Collection<String> values, int[] widths) {
+          Collection<String> values, int[] widths) {
 
     int size = 0;
     int delimit = 0;
@@ -115,30 +130,23 @@ class TableTextFormatter extends AbstractTextFormatter {
     return rows.isEmpty() && stage != 4;
   }
 
-  List<Map<String, String>> rows = new ArrayList<>();
-
   void add(Map<String, String> row) {
     rows.add(row);
   }
 
-  /** Number of columns. */
-  private int columns;
-
-  private List<String> columnNames;
-
-  private int[] widths;
-
-  private boolean analyzed = false;
-
   private void analyze(int lineWidth) {
-    if (analyzed) return;
+    if (analyzed) {
+      return;
+    }
     columnNames = rows.stream()
-      .flatMap(row -> row.keySet().stream())
-      .distinct()
-      .collect(Collectors.toList());
+            .flatMap(row -> row.keySet().stream())
+            .distinct()
+            .collect(Collectors.toList());
     columns = columnNames.size();
     widths = new int[columns];
-    for (int i = 0; i < columns; i++) widths[i] = columnNames.get(i).length();
+    for (int i = 0; i < columns; i++) {
+      widths[i] = columnNames.get(i).length();
+    }
     for (Map<String, String> row : rows) {
       for (int i = 0; i < columns; i++) {
         widths[i] = Math.max(widths[i], row.get(columnNames.get(i)).length());

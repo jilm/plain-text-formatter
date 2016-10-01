@@ -40,6 +40,10 @@ import java.util.Deque;
  */
 public class StrBuffer {
 
+  private static final int MAX_LENGTH = 70 * 70;
+
+  private static final String ZERO_LENGTH_MARK = "00";
+
   private final StringBuilder sb;
 
   /**
@@ -53,6 +57,16 @@ public class StrBuffer {
   /** Contains a sequence of opened codes. */
   private final Deque<StrCode> codeStack;
 
+
+  /** Actual head level. */
+  private int headLevel = 0;
+  //---------------------------------------- Marks and references manipulation.
+
+  private int markCounter;
+  //--------------------------------------- Internal Mark Manipulation Methods.
+
+  /** An index into the buffer where the next elemnet will be appended. */
+  private int cursor;
   /**
    *  Creates new empty buffer.
    */
@@ -60,19 +74,11 @@ public class StrBuffer {
     this.sb = new StringBuilder();
     this.headLevel = 0;
     this.cursor = 0;
-    this.appendices = false;
+    //this.appendices = false;
     this.pendingCodes = new ArrayDeque<>();
     this.pendingTexts = new ArrayDeque<>();
     this.codeStack = new ArrayDeque<>();
   }
-
-  //--------------------------------------------------------- Public Interface.
-
-  /** Indicate that there are some appendices at the end of the text. */
-  private boolean appendices;
-
-  /** Actual head level. */
-  private int headLevel = 0;
 
   //----------------------------------------------------------- Heads handling.
 
@@ -210,7 +216,7 @@ public class StrBuffer {
       appendAtTheEnd(iterator.getCode(), iterator.getText());
       iterator.next();
     }
-    this.appendices = true;
+    //this.appendices = true;
     return this;
   }
 
@@ -428,9 +434,6 @@ public class StrBuffer {
     return this;
   }
 
-  //---------------------------------------- Marks and references manipulation.
-
-  private int markCounter;
 
   public int reserveMark() {
     return markCounter++;
@@ -458,10 +461,6 @@ public class StrBuffer {
     return sb.toString();
   }
 
-  //--------------------------------------- Internal Mark Manipulation Methods.
-
-  /** An index into the buffer where the next elemnet will be appended. */
-  private int cursor;
 
   protected void append(final StrCode code) {
     sb.insert(cursor ++, code.getCode());
@@ -474,8 +473,6 @@ public class StrBuffer {
     sb.append(ZERO_LENGTH_MARK);
   }
 
-  private static final int MAX_LENGTH = 70 * 70;
-  private static final String ZERO_LENGTH_MARK = "00";
 
   protected void append(final StrCode code, String text) {
     int length = text.length();

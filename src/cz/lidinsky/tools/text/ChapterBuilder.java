@@ -44,6 +44,10 @@ public class ChapterBuilder extends AbstractBuilder {
     return new ParagraphBuilder(this);
   }
 
+  public TableBuilder appendTable() {
+    return new TableBuilder(this);
+  }
+
   public ListBuilder appendList(boolean ordered) {
     return new ListBuilder(this, ordered);
   }

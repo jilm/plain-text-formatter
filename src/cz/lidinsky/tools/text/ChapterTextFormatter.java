@@ -30,13 +30,6 @@ class ChapterTextFormatter extends BlockTextFormatter {
   }
 
   @Override
-  protected boolean isEmpty() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
-  protected void getPrefix(Line line) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
+  protected void getPrefix(Line line) {  }
 
 }

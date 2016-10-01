@@ -40,6 +40,7 @@ public class Formatter {
     String key = null;
     String value = null;
     Stack<Integer> chapterCounter = new Stack<>();
+    chapterCounter.push(1);
     boolean tempLevel = false;
     while (true) {
       if (iterator.isAtTheEnd()) return pointer;
@@ -49,6 +50,7 @@ public class Formatter {
         case END:
           if (pointer instanceof ChapterTextFormatter) {
             chapterCounter.pop();
+            chapterCounter.push(chapterCounter.pop() + 1);
           }
           pointer = pointer.getParent();
           break;
@@ -72,8 +74,8 @@ public class Formatter {
           break;
         case CHAPTER:
           int chapterNumber = chapterCounter.pop();
+          chapterCounter.push(chapterNumber);
           pointer = new ChapterTextFormatter(pointer, chapterNumber);
-          chapterCounter.push(chapterNumber + 1);
           chapterCounter.push(1);
           break;
         case KEY:

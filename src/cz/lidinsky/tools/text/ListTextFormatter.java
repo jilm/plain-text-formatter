@@ -22,7 +22,7 @@ package cz.lidinsky.tools.text;
  */
 public class ListTextFormatter extends BlockTextFormatter {
 
-  private char[] leading;
+  protected static final char[] BULLETS = {'o', '*', '-', '#', 'O', 'x', '>', '+', '~'};
 
   private final boolean ordered;
 
@@ -31,7 +31,6 @@ public class ListTextFormatter extends BlockTextFormatter {
     this.ordered = ordered;
   }
 
-  protected static final char[] BULLETS = {'o', '*', '-', '#', 'O', 'x', '>', '+', '~'};
 
   protected char getBullet() {
     return '*'; //BULLETS[depth % BULLETS.length];
