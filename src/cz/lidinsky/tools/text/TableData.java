@@ -17,19 +17,13 @@
 package cz.lidinsky.tools.text;
 
 import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Contains table data. Each column has a unique identifier.
  */
 class TableData {
 
-  /** 
+  /**
    * A buffer which contains the table data. First elements, it means from
    * 0 to the number of columns contains names of the columns.
    */
@@ -59,10 +53,11 @@ class TableData {
    */
   public void addColumn(String key) {
     // if necessary, enlarge the buffer
-    if (buffer.length < (cols + 1) * rows) {
+    if (buffer.length < (cols + 1) * (rows + 1)) {
       String[] temp = new String[(cols + 1) * (rows + 2)];
-      Arrays.fill(buffer, EMPTY);
+      Arrays.fill(temp, EMPTY);
       System.arraycopy(buffer, 0, temp, 0, buffer.length);
+      buffer = temp;
     }
     // shift all of the rows
     for (int row = rows - 1; row >= 0; row--) {
@@ -80,8 +75,9 @@ class TableData {
 
   public void addRow() {
     // if necessary, enlarge the buffer
-    if (buffer.length < cols * (rows + 1)) {
+    if (buffer.length < cols * (rows + 2)) {
       String[] temp = new String[cols * (rows + 3)];
+      Arrays.fill(temp, EMPTY);
       System.arraycopy(buffer, 0, temp, 0, buffer.length);
       buffer = temp;
     }

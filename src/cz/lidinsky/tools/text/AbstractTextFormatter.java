@@ -28,15 +28,6 @@ public abstract class AbstractTextFormatter {
   /** The node of the tree. */
   private Node<AbstractTextFormatter> node;
 
-  /** Line number relative to the first number of this object. */
-  private int lineCounter;
-
-  /** Order number of the item formatted. */
-  private int childCounter;
-
-  /** Line number for the current child. */
-  private int lineOfChildCounter;
-
   AbstractTextFormatter(AbstractTextFormatter parent) {
     if (parent != null) {
       node = new Node<>(parent.node);
@@ -44,9 +35,6 @@ public abstract class AbstractTextFormatter {
       node = new Node<>();
     }
     node.setDecorated(this);
-    this.lineCounter = 0;
-    this.childCounter = 0;
-    this.lineOfChildCounter = 0;
   }
 
   int getLevel() {
@@ -58,7 +46,7 @@ public abstract class AbstractTextFormatter {
    *
    * @return
    */
-  AbstractTextFormatter getParent() {
+  public AbstractTextFormatter getParent() {
     if (node.isRoot()) {
       return null;
     } else {
@@ -76,8 +64,6 @@ public abstract class AbstractTextFormatter {
       return true;
     } else {
       if (node.getDecoratedChildren().get(0).isEmpty()) {
-        childCounter ++;
-        lineOfChildCounter = 0;
         while (!node.isLeaf() && node.getDecoratedChildren().get(0).isEmpty()) {
           node.remove(0);
         }
@@ -96,10 +82,19 @@ public abstract class AbstractTextFormatter {
     return node.getDecoratedChildren().get(0);
   }
 
-  List<AbstractTextFormatter> getChildren() {
+  protected List<AbstractTextFormatter> getChildren() {
     return node.getDecoratedChildren();
   }
 
+  /**
+   * Fill-in one line of the final document.
+   *
+   * @param line
+   *            a char buffer to fill-in result
+   *
+   * @return true, if the line is finished, false if there was nothing to
+   *            fill-in
+   */
   abstract boolean formatLine(Line line);
 
 }

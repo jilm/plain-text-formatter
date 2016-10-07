@@ -48,7 +48,7 @@ class Line {
   /**
    * Erase the line object, so it could be used onece again.
    */
-  void reset() {
+  public void reset() {
     cursor = 0;
     Arrays.fill(buffer, ' ');
     delimiter = 0;
@@ -59,7 +59,7 @@ class Line {
    *
    * @return number of characters still available
    */
-  int getLength() {
+  public int getLength() {
     return buffer.length - cursor;
   }
 
@@ -71,7 +71,7 @@ class Line {
    * @return false if there was not enough spase to append the given word,
    *            true otherwise
    */
-  boolean appendWord(String word) {
+  public boolean appendWord(String word) {
     int wordLength = word.length();
     if (wordLength > buffer.length - cursor) {
       return false;
@@ -84,7 +84,7 @@ class Line {
     }
   }
 
-  boolean appendWord(String word, int offset, int length) {
+  public boolean appendWord(String word, int offset, int length) {
     if (length > buffer.length - offset) {
       return false;
     } else {
@@ -99,8 +99,8 @@ class Line {
   /**
    * Appends glue.
    */
-  void appendGlue() {
-
+  public void appendGlue() {
+    // TODO:
   }
 
   /**
@@ -108,7 +108,7 @@ class Line {
    *
    * @param number
    */
-  void skip(int number) {
+  public void skip(int number) {
     if (number > 0) {
       cursor += number;
       delimiter = 0;
@@ -122,17 +122,17 @@ class Line {
     return new String(buffer);
   }
 
-  void append(char c) {
+  public void append(char c) {
     buffer[cursor] = c;
     cursor++;
   }
 
-  void fill(int length, char c) {
+  public void fill(int length, char c) {
     Arrays.fill(buffer, cursor, cursor + length, c);
     cursor += length;
   }
 
-  boolean appendWord(String word, int width) {
+  public boolean appendWord(String word, int width) {
     int wordLength = word.length();
     if (wordLength > buffer.length - cursor) {
       return false;

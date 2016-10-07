@@ -81,7 +81,7 @@ class TableTextFormatter extends AbstractTextFormatter {
 
   @Override
   protected boolean isEmpty() {
-    return data.isEmpty();
+    return formatter == null ? data.isEmpty() : formatter.isEmpty();
   }
 
   /**
@@ -165,7 +165,7 @@ class TableTextFormatter extends AbstractTextFormatter {
 
     @Override
     protected boolean isEmpty() {
-      return this.counter > data.getRows();
+      return this.counter >= data.getRows();
     }
 
   }
@@ -184,7 +184,7 @@ class TableTextFormatter extends AbstractTextFormatter {
       head = new String[data.getCols()];
       data.getHeads(head);
       values = new String[data.getCols()];
-      data.getRow(0, head);
+      data.getRow(0, values);
       counter = 0;
     }
 
