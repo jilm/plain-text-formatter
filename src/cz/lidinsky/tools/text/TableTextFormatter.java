@@ -16,88 +16,55 @@
  */
 package cz.lidinsky.tools.text;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 /**
- * Common predecessor for all of the text formatters whose children are blocks
- * of text.
+ * Format its content in the form of the table
  */
 class TableTextFormatter extends AbstractTextFormatter {
 
-  private int stage;
+  private final TableData data;
 
-  List<Map<String, String>> rows = new ArrayList<>();
-
-  /**
-   * Number of columns.
-   */
-  private int columns;
-
-  private List<String> columnNames;
-
-  private int[] widths;
-
-  private boolean analyzed = false;
+  private AbstractTextFormatter formatter;
 
   /**
-   *
-   * @param depth
-   * @param order
+   * @param parent
+   *            parent object of this node
    */
   TableTextFormatter(AbstractTextFormatter parent) {
     super(parent);
-    stage = 0;
+    data = new TableData();
   }
 
-  /**
-   * This implementation iterates over the children and calls format line.
-   *
-   * @param buffer
-   * @param offset
-   * @param length
-   *
-   * @return number of characters
-   */
   @Override
   boolean formatLine(Line line) {
-
-    if (isEmpty()) {
-      return false;
+    if (formatter == null) {
+      switch (data.getRows()) {
+        case 0:
+          return false;
+        case 1:
+          this.formatter = new ItemFormatter();
+          break;
+        default:
+          this.formatter = new TableFormatter();
+          break;
+      }
     }
-    analyze(line.getLength());
-    switch (stage) {
-      case 0: // line above the head
-      case 2:
-      case 4:
-        line.fill(line.getLength(), '-');
-        stage++;
-        return true;
-      case 1: // head
-        formatRow(line, columnNames, widths);
-        stage++;
-        return true;
-      case 3: // body of the table
-        formatRow(line, getRowValues(), widths);
-        rows.remove(0);
-        if (rows.isEmpty()) {
-          stage++;
-        }
-        return true;
-      default:
-        return false;
-    }
+    return formatter.formatLine(line);
   }
 
   /**
    * Format one row of the table.
+   *
+   * @param line
+   *            the character buffer for the result
+   *
+   * @param values
+   *            a value for each column
+   *
+   * @param widths
+   *            a width of each column
    */
   protected int formatRow(Line line,
-          Collection<String> values, int[] widths) {
+          String[] values, int[] widths) {
 
     int size = 0;
     int delimit = 0;
@@ -112,58 +79,130 @@ class TableTextFormatter extends AbstractTextFormatter {
     return size;
   }
 
-  protected Collection<String> getRowValues() {
-    List<String> values = new ArrayList(columns);
-    for (int i = 0; i < columns; i++) {
-      values.add(rows.get(0).get(columnNames.get(i)));
-    }
-    return values;
+  @Override
+  protected boolean isEmpty() {
+    return data.isEmpty();
   }
 
   /**
-   * Returns true if there is not any text content inside this block.
+   * Put a value into the actual row.
    *
-   * @return
+   * @param key
+   *            column name
+   *
+   * @param value
+   *            a value for the given column
    */
-  @Override
-  protected boolean isEmpty() {
-    return rows.isEmpty() && stage != 4;
+  public void putValue(String key, String value) {
+    data.putValue(key, value);
   }
 
-  void add(Map<String, String> row) {
-    rows.add(row);
+  /**
+   * Starts new table row. Empty rows are ignored.
+   */
+  public void newRow() {
+    data.addRow();
   }
 
-  private void analyze(int lineWidth) {
-    if (analyzed) {
-      return;
+  /**
+   *
+   */
+  private class TableFormatter extends AbstractTextFormatter {
+
+    private int counter;
+    private String[] buffer;
+    private int[] widths;
+
+    public TableFormatter() {
+      super(null);
+      this.counter = -3;
     }
-    columnNames = rows.stream()
-            .flatMap(row -> row.keySet().stream())
-            .distinct()
-            .collect(Collectors.toList());
-    columns = columnNames.size();
-    widths = new int[columns];
-    for (int i = 0; i < columns; i++) {
-      widths[i] = columnNames.get(i).length();
+
+    private void initialize() {
+      buffer = new String[data.getCols()];
+      widths = new int[data.getCols()];
+      data.getColumnWidths(widths);
     }
-    for (Map<String, String> row : rows) {
-      for (int i = 0; i < columns; i++) {
-        widths[i] = Math.max(widths[i], row.get(columnNames.get(i)).length());
+
+    @Override
+    boolean formatLine(Line line) {
+
+      if (isEmpty()) {
+        return false;
+      } else {
+        switch (counter) {
+          case -3: // line above the head
+            initialize();
+            line.fill(line.getLength(), '-');
+            counter++;
+            return true;
+          case -2: // head itself
+            data.getHeads(buffer);
+            formatRow(line, buffer, widths);
+            counter++;
+            return true;
+          case -1: // line bellow the head
+            line.fill(line.getLength(), '-');
+            counter++;
+            return true;
+          default: // body of the table
+            if (counter == data.getRows()) {
+              // line bellow the table
+              line.fill(line.getLength(), '-');
+              counter++;
+              return true;
+            } else if (counter < data.getRows()) {
+              data.getRow(counter, buffer);
+              formatRow(line, buffer, widths);
+              counter++;
+              return true;
+            } else {
+              return false;
+            }
+        }
       }
     }
-    analyzed = true;
-  }
 
-  void putValue(String key, String value) {
-    if (rows.isEmpty()) {
-      rows.add(new HashMap());
+    @Override
+    protected boolean isEmpty() {
+      return this.counter > data.getRows();
     }
-    rows.get(rows.size() - 1).put(key, value);
+
   }
 
-  void newRow() {
-    rows.add(new HashMap());
+  /**
+   *
+   */
+  private class ItemFormatter extends AbstractTextFormatter {
+
+    private final String[] head;
+    private final String[] values;
+    private int counter;
+
+    ItemFormatter() {
+      super(null);
+      head = new String[data.getCols()];
+      data.getHeads(head);
+      values = new String[data.getCols()];
+      data.getRow(0, head);
+      counter = 0;
+    }
+
+    @Override
+    boolean formatLine(Line line) {
+      if (isEmpty()) return false;
+      line.appendWord(head[counter]);
+      line.append(':');
+      line.appendWord(values[counter]);
+      counter++;
+      return true;
+    }
+
+    @Override
+      protected boolean isEmpty() {
+        return counter >= head.length;
+      }
+
   }
 
 }

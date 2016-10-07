@@ -128,7 +128,7 @@ class Line {
   }
 
   void fill(int length, char c) {
-    Arrays.fill(buffer, cursor, length, c);
+    Arrays.fill(buffer, cursor, cursor + length, c);
     cursor += length;
   }
 
