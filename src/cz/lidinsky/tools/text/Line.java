@@ -16,7 +16,9 @@
  */
 package cz.lidinsky.tools.text;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Represents one line of text.
@@ -32,6 +34,9 @@ class Line {
   /** How many spaces it is necessary to insert in front of the next word. */
   private int delimiter;
 
+  /** Contains indices of the glues. */
+  private final List<Integer> glues;
+
   /**
    * Initialize the object.
    *
@@ -43,15 +48,17 @@ class Line {
     cursor = 0;
     Arrays.fill(buffer, ' ');
     delimiter = 0;
+    glues = new ArrayList();
   }
 
   /**
-   * Erase the line object, so it could be used onece again.
+   * Erase the line object, so it could be used once again.
    */
   public void reset() {
     cursor = 0;
     Arrays.fill(buffer, ' ');
     delimiter = 0;
+    glues.clear();
   }
 
   /**
@@ -64,11 +71,13 @@ class Line {
   }
 
   /**
-   * Appends given word at the end
+   * Appends given word at the end of the line. Appends a white character
+   * in front of the word if necessary.
    *
    * @param word
+   *            s word to append
    *
-   * @return false if there was not enough spase to append the given word,
+   * @return false if there was not enough space to append the given word,
    *            true otherwise
    */
   public boolean appendWord(String word) {
@@ -84,6 +93,22 @@ class Line {
     }
   }
 
+  /**
+   * Appends given word at the end of the line. Appends a white character
+   * in front of the word if necessary.
+   *
+   * @param word
+   *            a word to append
+   *
+   * @param offset
+   *            index of the first character of the word
+   *
+   * @param length
+   *            the length of the word
+   *
+   * @return false if there was not enough space to append given word,
+   *            true otherwise
+   */
   public boolean appendWord(String word, int offset, int length) {
     if (length > buffer.length - offset) {
       return false;
@@ -97,10 +122,10 @@ class Line {
   }
 
   /**
-   * Appends glue.
+   * Appends a glue.
    */
   public void appendGlue() {
-    // TODO:
+    glues.add(cursor);
   }
 
   /**
@@ -119,6 +144,25 @@ class Line {
 
   @Override
   public String toString() {
+    // expand glues
+    int space = getLength();
+    int offset = 0;
+    int gluesNumber = glues.size();
+    if (!glues.isEmpty() && space > 0) {
+      for (int glueIndex : glues) {
+        int spacePerGlue = space / gluesNumber;
+        System.arraycopy(buffer, glueIndex + offset,
+              buffer, glueIndex + offset + spacePerGlue,
+              buffer.length - glueIndex - offset - spacePerGlue);
+        Arrays.fill(buffer, glueIndex + offset,
+              glueIndex + offset + spacePerGlue, ' ');
+        offset += spacePerGlue;
+        space -= spacePerGlue;
+        gluesNumber --;
+        cursor += spacePerGlue;
+      }
+    }
+    // return string representation
     return new String(buffer);
   }
 

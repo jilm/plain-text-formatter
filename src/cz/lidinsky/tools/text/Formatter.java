@@ -86,6 +86,10 @@ public class Formatter {
           ((TableTextFormatter)pointer).putValue(key, value);
           iterator.next();
           break;
+        case TITLE:
+          value = iterator.getText();
+          new TitleTextFormatter(pointer, value);
+          break;
       }
       iterator.next();
     }

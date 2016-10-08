@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * Create string description of the object using refledtion.
  */
 public class Object2String {
 
