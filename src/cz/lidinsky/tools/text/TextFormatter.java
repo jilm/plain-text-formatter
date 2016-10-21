@@ -210,7 +210,7 @@ public class TextFormatter extends AbstractTextFormatter {
    */
   protected boolean formatLine(Line line) {
     while (!isEmpty()) {
-      if (line.appendWord(buffer, cursor, wordLength)) {
+      if (line.appendWord(buffer, cursor+offset, wordLength)) {
         cursor += wordLength;
         skipWhitespace();
         wordLength = calculateWordLength();

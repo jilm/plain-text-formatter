@@ -94,7 +94,7 @@ public class ArticleBuilder extends AbstractBuilder {
   @Override
   protected void serializePrior(final StrBuffer sb) {
     sb.append(StrCode.ARTICLE);
-    // TODO: append title
+    sb.append(StrCode.TITLE, title);
   }
 
   @Override

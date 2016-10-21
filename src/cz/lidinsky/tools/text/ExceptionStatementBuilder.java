@@ -17,6 +17,8 @@
 package cz.lidinsky.tools.text;
 
 import static cz.lidinsky.tools.text.StrUtils.isBlank;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Class of the exception: NullPointerException,
@@ -31,30 +33,67 @@ import static cz.lidinsky.tools.text.StrUtils.isBlank;
  */
 public class ExceptionStatementBuilder {
 
-  public void build(Throwable ex) {
+  public String build(Throwable ex) {
+    ArticleBuilder builder = new ArticleBuilder("Exception Statement");
     if (ex == null) {
 
     } else {
-      String message = ex.getMessage();
-      boolean blankMessage = StrUtils.isBlank(message);
-      Throwable cause = ex.getCause();
-      //ArticleBuilder parent = new ArticleBuilder();
-      //parent.setTitle("This is the exception statement");
+      List<Throwable> chain = getExceptionChain(ex);
+      if (chain.size() > 1) {
+        builder.appendParagraph().add(
+            String.format("It is a chain of %d exceptions:", chain.size()));
+        // exception classes
+        ListBuilder listBuilder = builder.appendChapter("Exception classes")
+          .appendList(true);
+        for (Throwable exception : chain) {
+          listBuilder.appendItem().appendParagraph().add(exception.getClass().getName());
+        }
+        // exception messages
+        listBuilder = builder.appendChapter("Messages").appendList(true);
+        for (Throwable exception : chain) {
+          listBuilder.appendItem().appendParagraph().add(exception.getMessage());
+        }
+        // more info
+        TableBuilder tableBuilder = builder.appendChapter("More info")
+          .appendTable();
+        // stack trace
+        listBuilder = builder.appendChapter("Stack trace").appendList(true);
+        for (Throwable exception : chain) {
+          listBuilder.appendItem().appendParagraph().add(
+              exception.getStackTrace()[0].toString());
+        }
 
-      if (isBlank(message)) {
-        //parent.appendParagraph()
-          //.append(
-          //String.format("Class of the exception: %s, exception is withnout any message.", ex.getClass().getName()));
       } else {
-        //parent.appendTable()
-        //      .append("Class", ex.getClass().getName())
-        //      .append("Message", message);
+
+        TableBuilder tableBuilder = builder.appendTable();
+        tableBuilder.appendValue("class", ex.getClass().getName());
+        tableBuilder.appendValue("message", ex.getMessage());
+        tableBuilder.appendValue("stack", ex.getStackTrace()[0].toString());
+
       }
     }
-    // parent.appendParagraph().append("The class of the exception: ")
-    //   .append(ex.getClass().getName());
-
+    return builder.serialize();
   }
 
+
+  public String toString(Throwable ex) {
+    String buffer = build(ex);
+    return new Formatter().format(buffer);
+  }
+
+
+  private static List<Throwable> getExceptionChain(Throwable e) {
+    List<Throwable> result = new ArrayList<>();
+    while (e != null) {
+      result.add(e);
+      e = e.getCause();
+    }
+    return result;
+  }
+
+  public static void main(String[] args) {
+    Exception e = new NullPointerException();
+    System.out.println(new ExceptionStatementBuilder().toString(e));
+  }
 
 }

@@ -475,6 +475,7 @@ public class StrBuffer {
 
 
   protected void append(final StrCode code, String text) {
+    if (text == null) text = "";
     int length = text.length();
     if (length > MAX_LENGTH) {
       append(code, text.substring(0, MAX_LENGTH));

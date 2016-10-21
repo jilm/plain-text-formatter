@@ -110,11 +110,11 @@ class Line {
    *            true otherwise
    */
   public boolean appendWord(String word, int offset, int length) {
-    if (length > buffer.length - offset) {
+    if (length + delimiter >= buffer.length - cursor) {
       return false;
     } else {
-      offset += delimiter;
-      word.getChars(offset, length, buffer, cursor);
+      cursor += delimiter;
+      word.getChars(offset, length + offset, buffer, cursor);
       cursor += length;
       delimiter = 1;
       return true;
