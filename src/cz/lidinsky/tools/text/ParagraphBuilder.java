@@ -34,6 +34,16 @@ public class ParagraphBuilder extends AbstractBuilder {
     codes = new ArrayList<>();
   }
 
+  @Override
+  void serialize(final StrBuffer sb) {
+    sb.append(StrCode.PARAGRAPH);
+    for (String text : children) {
+      sb.append(StrCode.TEXT, text);
+    }
+    sb.append(StrCode.END);
+  }
+
+
   /**
    * Adds plain text.
    *
@@ -48,16 +58,6 @@ public class ParagraphBuilder extends AbstractBuilder {
       codes.add(StrCode.TEXT);
     }
     return this;
-  }
-
-  @Override
-  protected void serializePrior(final StrBuffer sb) {
-    sb.append(StrCode.PARAGRAPH);
-  }
-
-  @Override
-  protected void serializePost(final StrBuffer sb) {
-    sb.append(StrCode.END);
   }
 
 }

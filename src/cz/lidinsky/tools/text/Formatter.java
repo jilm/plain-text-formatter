@@ -45,7 +45,7 @@ public class Formatter {
     while (true) {
       if (iterator.isAtTheEnd()) return pointer;
       StrCode code = iterator.getCode();
-      System.out.println(code);
+      //System.out.println(code);
       switch (code) {
         case END:
           if (pointer instanceof ChapterTextFormatter) {
@@ -71,6 +71,11 @@ public class Formatter {
           break;
         case TEXT:
           pointer = new TextFormatter(pointer, iterator.getText());
+          break;
+        case ITEM:
+          if (pointer instanceof TableTextFormatter) {
+            ((TableTextFormatter)pointer).newRow();
+          }
           break;
         case CHAPTER:
           int chapterNumber = chapterCounter.pop();

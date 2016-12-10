@@ -21,55 +21,70 @@ package cz.lidinsky.tools.text;
 
 /**
  */
-enum StrCode {
+public enum StrCode {
 
-  HEAD0 (0),
-  HEAD1 (1),
-  HEAD2 (2),
-  HEAD3 (3),
-  HEAD4 (4),
-  LIST_ORDERED (5),
-  LIST_UNORDERED (5),
-  ITEM (6),
-  PARAGRAPH (7),
-  APPENDIX (100),
-  EMPHASIZE (100),
-  END (100),
-  EXTENDED (100),
-  HORIZONTAL_RULE (100),
-  LITERAL (100),
-  NESTED (100),
-  NEW_LINE (100),
-  STRONG (100),
-  TABLE (100),
-  TEXT (100),
-  LIST_END (100),
-  MARK (100),
-  REFERENCE (100),
-  ARTICLE(100),
-  CHAPTER (100),
-  TITLE(100),
-  KEY (100),
-  VALUE (100);
+  HEAD0 (0, true), // deprecated
+  HEAD1 (1, true), // deprecated
+  HEAD2 (2, true), // deprecated
+  HEAD3 (3, true), // deprecated
+  HEAD4 (4, true), // deprecated
+  LIST_ORDERED (5, true), // block
+  LIST_UNORDERED (5, true), // block
+  ITEM (6, true), // block, nested into list element
+  PARAGRAPH (7, true), // block
+  APPENDIX (100, true), // block
+  EMPHASIZE (100, false), // in-line
+  END (100, false), // block end
+  EXTENDED (100, false), // in-line
+  HORIZONTAL_RULE (100, false), // in-line
+  LITERAL (100, false), // in-line
+  NESTED (100, true), // block
+  NEW_LINE (100, false), // in-line
+  STRONG (100, false), // in-line
+  TABLE (100, true), // block
+  TEXT (100, false), // in-line
+  LIST_END (100, false), // deprecated
+  MARK (100, true), // ???
+  REFERENCE (100, true), // ???
+  ARTICLE(100, true), // block
+  CHAPTER (100, true), // block
+  TITLE(100, false), // in-line
+  KEY (100, false), // in-line
+  VALUE (100, true); // block
 
   int level;
+  boolean block;
 
   static final int HEAD_LEVELS = 5;
 
-  StrCode(int level) {
+  StrCode(int level, boolean block) {
     this.level = level;
+    this.block = block;
   }
 
-  char getCode() {
+  /**
+   *
+   * @return
+   */
+  public char getCode() {
     return (char)((int)'0' + ordinal());
   }
 
-  static StrCode getStrCode(char code) {
+  /**
+   *
+   * @param code
+   * @return
+   */
+  public static StrCode getStrCode(char code) {
     return StrCode.class.getEnumConstants()[(int)(code - '0')];
   }
 
   int getLevel() {
     return this.level;
+  }
+
+  public boolean isBlock() {
+    return block;
   }
 
 }

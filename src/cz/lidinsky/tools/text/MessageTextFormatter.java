@@ -14,17 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package cz.lidinsky.tools.text;
 
 /**
- * The idea is to create library which will typeset various messages of the
- * program into the plain text with respect to the typeset traditions (as much
- * as it will be possible.)
- * 
- * <p>TEXT, EMPHASIZE, CAPTION,  and STRONG are the only elements that doesn't contain
- * the END element.
  *
- * <p>LIST_ORDERED and LIST_UNORDERED may contain only ITEM elements
  *
- * <p>
  */
-package cz.lidinsky.tools.text;
+class MessageTextFormatter extends BlockTextFormatter{
+
+  public MessageTextFormatter() {
+    super(null);
+  }
+
+  @Override
+  protected void getPrefix(Line line) { }
+
+  @Override
+  int getLevel() {
+    return 0;
+  }
+
+}
