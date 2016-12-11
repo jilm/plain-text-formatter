@@ -171,8 +171,8 @@ public class StrBuffer2 implements Iterable<StrBuffer2> {
       // find the appropriate end element
       int pointer = end(offset);
       return new StrBuffer2(this.buffer.substring(0, pointer)
-        + buffer
-        + this.buffer.substring(pointer + 1, this.buffer.length()), offset);
+        + buffer.getBuffer()
+        + this.buffer.substring(pointer, this.buffer.length()), offset);
     }
   }
 
@@ -197,6 +197,10 @@ public class StrBuffer2 implements Iterable<StrBuffer2> {
   @Override
   public int hashCode() {
     return buffer.hashCode() ^ offset;
+  }
+
+  public String getBuffer() {
+    return buffer;
   }
 
   //---------------------------------------------------------- Private methods.
@@ -295,8 +299,8 @@ public class StrBuffer2 implements Iterable<StrBuffer2> {
     @Override
     public int size() {
       int counter = 0;
-      int pointer = offset;
-      while (pointer < buffer.length()) {
+      int pointer = next(offset);
+      while (pointer < buffer.length() && getCode(pointer) != StrCode.END) {
         counter++;
         pointer = nextSibling(pointer);
       }
@@ -308,11 +312,11 @@ public class StrBuffer2 implements Iterable<StrBuffer2> {
 
       Iterator<StrBuffer2> iterator = new Iterator() {
 
-        private int pointer = offset;
+        private int pointer = StrBuffer2.this.next(offset);
 
         @Override
         public StrBuffer2 next() {
-          if (pointer < buffer.length()) {
+          if (pointer < buffer.length() && getCode(pointer) != StrCode.END) {
             StrBuffer2 result = new StrBuffer2(buffer, pointer);
             pointer = nextSibling(pointer);
             return result;
@@ -324,7 +328,7 @@ public class StrBuffer2 implements Iterable<StrBuffer2> {
 
         @Override
         public boolean hasNext() {
-          return pointer < buffer.length();
+          return pointer < buffer.length() && getCode(pointer) != StrCode.END;
         }
 
       };
