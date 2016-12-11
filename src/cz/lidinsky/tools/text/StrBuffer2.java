@@ -88,6 +88,12 @@ public class StrBuffer2 implements Iterable<StrBuffer2> {
     }
   }
 
+  public static String getLengthCode(int length) {
+    return new String(new char[] {
+        (char)('0' + (int)(length / 70)),
+        (char)('0' + (int)(length % 70))});
+  }
+
   private StrBuffer2(final String buffer, final int offset) {
     this.buffer = buffer;
     this.offset = offset;
@@ -161,6 +167,15 @@ public class StrBuffer2 implements Iterable<StrBuffer2> {
     return new ChildCollection();
   }
 
+  /**
+   * Appends given buffer tree as a last child of this node. Returns given
+   * node of the new created tree.
+   *
+   * @param buffer
+   *            a buffer tree to be added into this tree
+   *
+   * @return a new merged tree, and pointer points to the added subtree
+   */
   public StrBuffer2 appendChild(StrBuffer2 buffer) {
     StrCode code = getCode();
     if (code == StrCode.END) {
