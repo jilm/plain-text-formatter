@@ -30,10 +30,10 @@ import java.util.NoSuchElementException;
 public class StrBuffer2 implements Iterable<StrBuffer2> {
 
   /** The buffer. */
-  private final String buffer;
+  protected final String buffer;
 
   /** Character index into the buffer. */
-  private final int offset;
+  protected final int offset;
 
   /**
    * Create new buffer.
@@ -94,7 +94,7 @@ public class StrBuffer2 implements Iterable<StrBuffer2> {
         (char)('0' + (int)(length % 70))});
   }
 
-  private StrBuffer2(final String buffer, final int offset) {
+  protected StrBuffer2(final String buffer, final int offset) {
     this.buffer = buffer;
     this.offset = offset;
   }
@@ -241,7 +241,7 @@ public class StrBuffer2 implements Iterable<StrBuffer2> {
    *
    * @return
    */
-  private int nextSibling(int index) {
+  protected int nextSibling(int index) {
     int level = 0;
     int pointer = index;
     do {
@@ -299,7 +299,16 @@ public class StrBuffer2 implements Iterable<StrBuffer2> {
     }
   }
 
-  private StrCode getCode(int index) {
+  protected String getText(int index) {
+    if (getCode(index).isBlock()) {
+      return "";
+    } else {
+      int textLength = getLength(index);
+      return buffer.substring(index + 3, index + 3 + textLength);
+    }
+  }
+
+  protected StrCode getCode(int index) {
     return StrCode.getStrCode(buffer.charAt(index));
   }
 
