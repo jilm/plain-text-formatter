@@ -30,23 +30,26 @@ public class Table extends StrBuffer2 {
 
   public String get(String key) {
     int pointer = offset;
+    int level = 0;
+    String lastKey = "";
     // find first nested code
-    pointer = next(pointer);
-    if (getCode(pointer) == StrCode.NESTED) {
-      // iterate over all of the ITEM codes
-      pointer = next(pointer);
-      while (getCode(pointer) == StrCode.ITEM) {
-        // should be a key code
-        int keyPointer = next(pointer);
-        if (getCode(keyPointer) == StrCode.KEY) {
-          if (getText(keyPointer).equals(key)) {
-            int valuePointer = next(keyPointer); // should be a VALUE code
-            valuePointer = next(valuePointer); // should be a TEXT code
-            return getText(valuePointer);
-          }
-        }
-        pointer = nextSibling(pointer);
+    while (pointer < buffer.length()) {
+      StrCode code = getCode(pointer);
+      System.out.print(code);
+      if (code == StrCode.END) {
+        level--;
+      } else if (code == StrCode.KEY) {
+        System.out.print(getText(pointer));
+        lastKey = getText(pointer);
+      } else if (code == StrCode.TEXT && lastKey.equals(key)) {
+        return getText(pointer);
+      } else if (code.isBlock()) {
+        level++;
+      } else {
+
       }
+      System.out.println();
+      pointer = next(pointer);
     }
     throw new NoSuchElementException();
   }

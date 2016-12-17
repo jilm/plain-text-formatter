@@ -48,7 +48,10 @@ public class MapBuilder {
       sb.append(StrCode.ITEM.getCode())               // begin item
               .append(StrCode.KEY.getCode())
               .append(StrBuffer2.getLengthCode(key.length()))
+              .append(key)
               .append(StrCode.VALUE.getCode())        // begin value
+              .append(StrCode.TEXT.getCode())
+              .append(StrBuffer2.getLengthCode(value.length()))
               .append(value)
               .append(StrCode.END.getCode())          // end value
               .append(StrCode.END.getCode());         // end item

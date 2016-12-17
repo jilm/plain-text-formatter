@@ -226,7 +226,9 @@ public class StrBuffer2 implements Iterable<StrBuffer2> {
   public int next(int pointer) {
     // get code on the given index
     StrCode code = getCode(pointer);
-    if (code.isBlock()) {
+    if (code == StrCode.END) {
+      return pointer + 1;
+    } if (code.isBlock()) {
       return pointer + 1;
     } else {
       int length = getLength(pointer);
