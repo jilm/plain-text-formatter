@@ -23,7 +23,7 @@ import java.io.Reader;
  *
  * @author jilm
  */
-public class StrBufferReader {
+public class StrBufferReader implements AutoCloseable {
 
   private char[] buffer;
 
@@ -110,6 +110,11 @@ public class StrBufferReader {
             .append(new String(buffer, 0, offset + chars))
             .append("]");
     return sb.toString();
+  }
+
+  @Override
+  public void close() throws Exception {
+    this.reader.close();
   }
 
 }
